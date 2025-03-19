@@ -1,26 +1,9 @@
 {
   "name": "JetBrains Federated (DevContainer)",
-  "dockerComposeFile": "docker-compose.yaml"],
+  "dockerComposeFile": "docker-compose.yaml",
   "service": "main",
   "workspaceFolder": "/work",
-  "shutdownAction": "stopCompose"
-  "features": {
-    "ghcr.io/devcontainers/features/common-utils": {
-      "username": "jb",
-      "installZsh": false
-    },
-    "ghcr.io/devcontainers/features/python": {
-      "version": "os-provided"
-    },
-    "ghcr.io/devcontainers-community/features/bazel": {},
-    "ghcr.io/devcontainers/features/git": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/git-lfs": {},
-    "ghcr.io/devcontainers/features/github-cli": {},
-    "ghcr.io/devcontainers/features/docker-outside-of-docker": {},
-    "ghcr.io/devcontainers/features/sshd": {}
-  },
+  "shutdownAction": "stopCompose",
   "mounts": [
     {
       "target": "/home/jb/.cache/bazel",
@@ -52,5 +35,4 @@
       "settings": {}
     }
   },
-  "containerUser": "jb",
 }
