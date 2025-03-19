@@ -1,0 +1,56 @@
+{
+  "name": "JetBrains Federated (DevContainer)",
+  "dockerComposeFile": "docker-compose.yaml"],
+  "service": "main",
+  "workspaceFolder": "/work",
+  "shutdownAction": "stopCompose"
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils": {
+      "username": "jb",
+      "installZsh": false
+    },
+    "ghcr.io/devcontainers/features/python": {
+      "version": "os-provided"
+    },
+    "ghcr.io/devcontainers-community/features/bazel": {},
+    "ghcr.io/devcontainers/features/git": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git-lfs": {},
+    "ghcr.io/devcontainers/features/github-cli": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker": {},
+    "ghcr.io/devcontainers/features/sshd": {}
+  },
+  "mounts": [
+    {
+      "target": "/home/jb/.cache/bazel",
+      "source": "jetbrains-federated-devcontainer-cache-bazel",
+      "type": "volume"
+    }
+  ],
+  "customizations": {
+    "jetbrains": {
+      "backend": "IntelliJ IDEA Ultimate",
+      "plugins": [
+        "org.jetbrains.bazel"
+      ],
+      "settings": {
+        "Git4Idea:app:Git-Application-Settings.use_credential_helper": true,
+        "Git4Idea:app:Git-Application-Settings.staging_area_enabled": true
+      }
+    },
+    "vscode": {
+      "extensions": [
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-azuretools.vscode-docker",
+        "ms-python.python",
+        "galexite.bazel-cpp-tools",
+        "BazelBuild.vscode-bazel",
+        "xaver.clang-format",
+        "alesiong.clang-tidy-linter"
+      ],
+      "settings": {}
+    }
+  },
+  "containerUser": "jb",
+}
