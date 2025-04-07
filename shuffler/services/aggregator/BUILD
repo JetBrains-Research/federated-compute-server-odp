@@ -37,7 +37,7 @@ oci_image(
         "-jar",
         "/aggregator_application.jar",
     ],
-    # Set ENCRYPTION_OPTS to below to disable encryption for local dev. Note this will change the resulting hash.
+    # Set  ENCRYPTION_OPTS to below to disable encryption for local dev. Note this will change the resulting hash.
     # "--public_key_service_base_url 'https://publickeyservice.odp.gcp.privacysandboxservices.com/.well-known/odp/v1/public-keys' --should_encrypt_aggregator_output 'false'"
     # env = {"ENCRYPTION_OPTS": "--public_key_service_base_url 'https://publickeyservice.odp.gcp.privacysandboxservices.com/.well-known/odp/v1/public-keys'"},
     env = {"ENCRYPTION_OPTS": "--public_key_service_base_url 'https://publickeyservice.odp.gcp.privacysandboxservices.com/.well-known/odp/v1/public-keys' --should_encrypt_aggregator_output 'false'"},
