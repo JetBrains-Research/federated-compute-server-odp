@@ -59,7 +59,7 @@ oci_push(
     name = "aggregator_image_publish",
     image = ":aggregator_image",
     remote_tags = ["latest"],
-    repository = "europe-west4-docker.pkg.dev/jetbrains-fed-compute/odp/aggregator_image",
+    repository = "europe-west2-docker.pkg.dev/jetbrains-fed-compute/odp-w2/aggregator_image",
 )
 
 # Run a local container with:

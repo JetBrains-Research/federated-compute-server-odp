@@ -29,8 +29,8 @@ parent_domain_name      = "jbf.app"
 spanner_instance_config = "regional-europe-west4"
 
 # Workload Images
-aggregator_image      = "europe-west4-docker.pkg.dev/jetbrains-fed-compute/odp/aggregator_image:latest"
-model_updater_image   = "europe-west4-docker.pkg.dev/jetbrains-fed-compute/odp/model_updater_image:latest"
+aggregator_image      = "europe-west2-docker.pkg.dev/jetbrains-fed-compute/odp-w2/aggregator_image:latest"
+model_updater_image   = "europe-west2-docker.pkg.dev/jetbrains-fed-compute/odp-w2/model_updater_image:latest"
 task_management_image = "europe-west4-docker.pkg.dev/jetbrains-fed-compute/odp/task_management_image:latest"
 task_builder_image    = "europe-west4-docker.pkg.dev/jetbrains-fed-compute/odp/task_builder_image:latest"
 
