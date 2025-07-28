@@ -40,6 +40,9 @@ public final class GoogleCloudArgs {
   @Parameter(names = "--task_database_name", description = "The spanner task database name.")
   private String taskDatabaseName;
 
+  @Parameter(names = "--lock_database_name", description = "The spanner lock database name.")
+  private String lockDatabaseName;
+
   @Parameter(
       names = "--metrics_spanner_instance",
       description = "The metrics spanner instance name.")

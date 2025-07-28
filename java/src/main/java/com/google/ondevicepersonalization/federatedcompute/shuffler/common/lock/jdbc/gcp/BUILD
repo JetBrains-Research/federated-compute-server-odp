@@ -19,6 +19,7 @@ java_library(
     srcs = ["SpannerLockConfiguration.java"],
     deps = [
         "@maven//:com_google_cloud_google_cloud_spanner_pgadapter",
+        "@maven//:com_google_cloud_google_cloud_spanner_jdbc",
         "@maven//:org_postgresql_postgresql",
         "@maven//:org_springframework_boot_spring_boot_starter_jdbc",
         "@maven//:org_springframework_integration_spring_integration_jdbc",

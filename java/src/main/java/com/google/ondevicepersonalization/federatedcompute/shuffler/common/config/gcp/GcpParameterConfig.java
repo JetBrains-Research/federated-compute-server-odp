@@ -62,7 +62,7 @@ public class GcpParameterConfig {
   @Bean
   @Qualifier("lockDatabaseName")
   public String lockDatabaseName() {
-    String lockDatabaseName = googleCloudArgs.getTaskDatabaseName();
+    String lockDatabaseName = googleCloudArgs.getLockDatabaseName();
     if (Strings.isNullOrEmpty(lockDatabaseName)) {
       lockDatabaseName = gcpParameterClient.getParameter("LOCK_DATABASE_NAME").orElse(null);
     }

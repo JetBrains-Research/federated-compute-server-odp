@@ -23,9 +23,31 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys/adc.json
       GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
       # environment and project_id are used to reference GCP resources such as Spanner, PubSub, and SecretsManager.
-      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}' 
-        --environment 'local'"
-      ENCRYPTION_OPTS: "--public_key_service_base_url '<url>'"
+      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}'
+        --environment 'local'
+        --spanner_instance 'fcp-task-yuraaka'
+        --lock_database_name 'fcp-lock-db-yuraaka'
+        --task_database_name 'fcp-task-db-yuraaka'
+        --metrics_spanner_instance 'fcp-metric-yuraaka'
+        --metrics_database_name 'fcp-metric-db-yuraaka'
+        --client_gradient_bucket_template 'fcp-yuraaka-g-0'
+        --aggregated_gradient_bucket_template 'fcp-yuraaka-a-0'
+        --model_bucket_template 'fcp-yuraaka-m-0'
+        --model_updater_pubsub_topic 'model-updater-yuraaka-topic'
+        --model_updater_pubsub_subscription 'model-updater-yuraaka-subscription'
+        --aggregator_pubsub_topic 'aggregator-yuraaka-topic'
+        --aggregator_pubsub_subscription 'aggregator-yuraaka-subscription'
+        --aggregator_notification_pubsub_topic 'aggregator-notifications-yuraaka-topic'
+        --aggregator_notification_pubsub_subscription 'aggregator-notifications-yuraaka-subscription'
+        --wip_provider_a 'wip_provider_a'
+        --wip_provider_b 'wip_provider_b'
+        --service_account_a 'service-account-a'
+        --service_account_b 'service-account-b'
+        --encryption_key_service_a_base_url 'https://dummy1.com'
+        --encryption_key_service_b_base_url 'https://dummy2.com'
+        --encryption_key_service_a_cloudfunction_url 'encryption_key_service_a_cloudfunction_url'
+        --encryption_key_service_b_cloudfunction_url 'encryption_key_service_b_cloudfunction_url'"
+      ENCRYPTION_OPTS: "--public_key_service_base_url 'https://publickeyservice.odp.gcp.privacysandboxservices.com/.well-known/odp/v1/public-keys' --should_encrypt_aggregator_output 'false'"
     volumes:
     - ${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/adc.json:ro
   collector:
@@ -37,8 +59,22 @@ services:
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys/adc.json
       GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
-      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}' 
-      --environment 'local'"
+      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}'
+        --environment 'local'
+        --spanner_instance 'fcp-task-yuraaka'
+        --lock_database_name 'fcp-lock-db-yuraaka'
+        --task_database_name 'fcp-task-db-yuraaka'
+        --metrics_spanner_instance 'fcp-metric-yuraaka'
+        --metrics_database_name 'fcp-metric-db-yuraaka'
+        --client_gradient_bucket_template 'fcp-yuraaka-g-0'
+        --aggregated_gradient_bucket_template 'fcp-yuraaka-a-0'
+        --model_bucket_template 'fcp-yuraaka-m-0'
+        --model_updater_pubsub_topic 'model-updater-yuraaka-topic'
+        --model_updater_pubsub_subscription 'model-updater-yuraaka-subscription'
+        --aggregator_pubsub_topic 'aggregator-yuraaka-topic'
+        --aggregator_pubsub_subscription 'aggregator-yuraaka-subscription'
+        --aggregator_notification_pubsub_topic 'aggregator-notifications-yuraaka-topic'
+        --aggregator_notification_pubsub_subscription 'aggregator-notifications-yuraaka-subscription'"
     user: root
     volumes:
     - ${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/adc.json:ro
@@ -51,8 +87,30 @@ services:
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys/adc.json
       GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
-      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}' 
-      --environment 'local'"
+      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}'
+        --environment 'local'
+        --spanner_instance 'fcp-task-yuraaka'
+        --lock_database_name 'fcp-lock-db-yuraaka'
+        --task_database_name 'fcp-task-db-yuraaka'
+        --metrics_spanner_instance 'fcp-metric-yuraaka'
+        --metrics_database_name 'fcp-metric-db-yuraaka'
+        --client_gradient_bucket_template 'fcp-yuraaka-g-0'
+        --aggregated_gradient_bucket_template 'fcp-yuraaka-a-0'
+        --model_bucket_template 'fcp-yuraaka-m-0'
+        --model_updater_pubsub_topic 'model-updater-yuraaka-topic'
+        --model_updater_pubsub_subscription 'model-updater-yuraaka-subscription'
+        --aggregator_pubsub_topic 'aggregator-yuraaka-topic'
+        --aggregator_pubsub_subscription 'aggregator-yuraaka-subscription'
+        --aggregator_notification_pubsub_topic 'aggregator-notifications-yuraaka-topic'
+        --aggregator_notification_pubsub_subscription 'aggregator-notifications-yuraaka-subscription'
+        --wip_provider_a 'wip_provider_a'
+        --wip_provider_b 'wip_provider_b'
+        --service_account_a 'service-account-a'
+        --service_account_b 'service-account-b'
+        --encryption_key_service_a_base_url 'https://dummy1.com'
+        --encryption_key_service_b_base_url 'https://dummy2.com'
+        --encryption_key_service_a_cloudfunction_url 'encryption_key_service_a_cloudfunction_url'
+        --encryption_key_service_b_cloudfunction_url 'encryption_key_service_b_cloudfunction_url'"
     volumes:
     - ${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/adc.json:ro
   taskassignment:
@@ -65,7 +123,21 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys/adc.json
       GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
       FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}'
-      --environment 'local'"
+        --environment 'local'
+        --spanner_instance 'fcp-task-yuraaka'
+        --lock_database_name 'fcp-lock-db-yuraaka'
+        --task_database_name 'fcp-task-db-yuraaka'
+        --metrics_spanner_instance 'fcp-metric-yuraaka'
+        --metrics_database_name 'fcp-metric-db-yuraaka'
+        --client_gradient_bucket_template 'fcp-yuraaka-g-0'
+        --aggregated_gradient_bucket_template 'fcp-yuraaka-a-0'
+        --model_bucket_template 'fcp-yuraaka-m-0'
+        --model_updater_pubsub_topic 'model-updater-yuraaka-topic'
+        --model_updater_pubsub_subscription 'model-updater-yuraaka-subscription'
+        --aggregator_pubsub_topic 'aggregator-yuraaka-topic'
+        --aggregator_pubsub_subscription 'aggregator-yuraaka-subscription'
+        --aggregator_notification_pubsub_topic 'aggregator-notifications-yuraaka-topic'
+        --aggregator_notification_pubsub_subscription 'aggregator-notifications-yuraaka-subscription'"
     user: root
     volumes:
     - ${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/adc.json:ro
@@ -78,7 +150,22 @@ services:
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys/adc.json
       GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
-      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}' --environment 'local'"
+      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}'
+        --environment 'local'
+        --spanner_instance 'fcp-task-yuraaka'
+        --lock_database_name 'fcp-lock-db-yuraaka'
+        --task_database_name 'fcp-task-db-yuraaka'
+        --metrics_spanner_instance 'fcp-metric-yuraaka'
+        --metrics_database_name 'fcp-metric-db-yuraaka'
+        --client_gradient_bucket_template 'fcp-yuraaka-g-0'
+        --aggregated_gradient_bucket_template 'fcp-yuraaka-a-0'
+        --model_bucket_template 'fcp-yuraaka-m-0'
+        --model_updater_pubsub_topic 'model-updater-yuraaka-topic'
+        --model_updater_pubsub_subscription 'model-updater-yuraaka-subscription'
+        --aggregator_pubsub_topic 'aggregator-yuraaka-topic'
+        --aggregator_pubsub_subscription 'aggregator-yuraaka-subscription'
+        --aggregator_notification_pubsub_topic 'aggregator-notifications-yuraaka-topic'
+        --aggregator_notification_pubsub_subscription 'aggregator-notifications-yuraaka-subscription'"
     user: root
     volumes:
     - ${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/adc.json:ro
@@ -91,7 +178,23 @@ services:
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys/adc.json
       GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
-      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}' --environment 'local'"
+      # SPRING_DATASOURCE_URL: jdbc:cloudspanner:/projects/${GOOGLE_CLOUD_PROJECT}/instances/fcp-task-yuraaka/databases/fcp-lock-db-yuraaka
+      FCP_OPTS: "--project_id '${GOOGLE_CLOUD_PROJECT}'
+        --environment 'local'
+        --spanner_instance 'fcp-task-yuraaka'
+        --lock_database_name 'fcp-lock-db-yuraaka'
+        --task_database_name 'fcp-task-db-yuraaka'
+        --metrics_spanner_instance 'fcp-metric-yuraaka'
+        --metrics_database_name 'fcp-metric-db-yuraaka'
+        --client_gradient_bucket_template 'fcp-yuraaka-g-0'
+        --aggregated_gradient_bucket_template 'fcp-yuraaka-a-0'
+        --model_bucket_template 'fcp-yuraaka-m-0'
+        --model_updater_pubsub_topic 'model-updater-yuraaka-topic'
+        --model_updater_pubsub_subscription 'model-updater-yuraaka-subscription'
+        --aggregator_pubsub_topic 'aggregator-yuraaka-topic'
+        --aggregator_pubsub_subscription 'aggregator-yuraaka-subscription'
+        --aggregator_notification_pubsub_topic 'aggregator-notifications-yuraaka-topic'
+        --aggregator_notification_pubsub_subscription 'aggregator-notifications-yuraaka-subscription'"
     user: root
     volumes:
     - ${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/adc.json:ro
