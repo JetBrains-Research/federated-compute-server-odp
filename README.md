@@ -16,7 +16,7 @@ Training consists of the following steps:
 5. The Federated Compute client notifies the Federated Compute server that its training has completed.
 6. The Federated Compute server waits until enough clients have submitted their contributions.
 7. A round of aggregation is triggered.
-8. Encrypted contributions are loaded into a Trusted Execution Environment (TEE) by the Aggregator. 
+8. Encrypted contributions are loaded into a Trusted Execution Environment (TEE) by the Aggregator.
 9. The Aggregator attests itself, following NIST's [RFC 9334 Remote ATtestation procedureS (RATS) Architecture](https://www.rfc-editor.org/rfc/rfc9334), to the coordinators. Upon success attestation, the key services grant it the decryption keys. These keys may be split across multiple key providers in a [shamir secret sharing](https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing) scheme.
 10. The Aggregator does cross-device aggregation, clips and noises per appropriate Differential Privacy (DP) mechanisms, and outputs the noised results.
 11. The Aggregator triggers the Model Updater.
@@ -27,3 +27,25 @@ This Federated Compute service would be deployed on cloud service(s) which suppo
 
 ## Important: This is a preview release
 This is a preview version of the On-Device Personalization Federated Compute Server and should be used for testing and evaluation purposes. As such, there are not yet any guarantees about forward/backward source compatibility. It is currently not recommended for use in production settings.
+
+## Devenv setup
+1. Install required packages
+```
+sudo apt-get update
+sudo apt-get install --no-install-recommends -y \
+    curl \
+    unzip \
+    zip \
+    xz-utils \
+    wget \
+    default-jdk \
+    libtinfo5 \
+    g++ \
+    python3 \
+    jq
+```
+2. Download & install bazelisk
+```
+wget https://github.com/bazelbuild/bazelisk/releases/download/v1.26.0/bazelisk-amd64.deb
+sudo dpkg -i bazelisk-amd64.deb
+```
