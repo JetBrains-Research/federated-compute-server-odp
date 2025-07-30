@@ -30,7 +30,8 @@
     "java.project.sourcePaths": [
         "java/src/it/java",
         "java/src/main/java",
-        "java/src/test/java"
+        "java/src/test/java",
+        "federatedcompute/fcp/java_src/main/java"
     ],
     "java.project.referencedLibraries": [
         "bazel-out/k8-opt/bin/external/maven/v1/https/repo1.maven.org/maven2/**/*.jar",
