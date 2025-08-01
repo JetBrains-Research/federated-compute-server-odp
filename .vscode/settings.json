@@ -8,24 +8,24 @@
         "**/Thumbs.db": true,
         "**/CVS": true,
         ".eclipse": false,
-        ".git": false,
-        "docs": false,
-        "external": false,
-        "federatedcompute": false,
-        "java": false,
-        "patches": false,
-        "python": false,
-        "scripts": false,
-        "shuffler": false,
-        "toolchain": false,
-        "tools": false,
+        ".git": true,
         "bazel-odp": false,
         "bazel-out": false,
         "bazel-bin": false,
         "bazel-testlogs": false,
         ".vscode": false,
         ".idea": false,
-        ".bazelbsp": false
+        ".bazelbsp": false,
+        "docs": true,
+        "external": true,
+        "federatedcompute": false,
+        "java": false,
+        "patches": true,
+        "python": true,
+        "scripts": true,
+        "shuffler": true,
+        "toolchain": true,
+        "tools": true
     },
     "java.project.sourcePaths": [
         "java/src/it/java",
@@ -33,15 +33,29 @@
         "java/src/test/java",
         "federatedcompute/fcp/java_src/main/java"
     ],
-    "java.project.referencedLibraries": [
-        "bazel-out/k8-opt/bin/external/maven/v1/https/repo1.maven.org/maven2/**/*.jar",
-    ],
     "files.watcherExclude": {
         "**/.git/objects/**": true,
         "**/.git/subtree-cache/**": true,
-        "**/.hg/store/**": true
+        "**/.hg/store/**": true,
+        "**/!(.eclipse|java)/**": true
     },
+    "java.project.referencedLibraries": [
+        "bazel-out/k8-opt/bin/external/maven/v1/https/repo1.maven.org/maven2/**/*.jar",
+        "bazel-bin/external/federatedcompute/fcp/protos/**/*.jar",
+        "bazel-out/k8-opt/bin/external/**/*.jar",
+        "bazel-out/k8-opt/bin/shuffler/**/*.jar",
+        "bazel-bin/java/src/test/java/com/google/ondevicepersonalization/federatedcompute/shuffler/**/*.jar",
+        "bazel-out/k8-opt/bin/external/federatedcompute/fcp/protos/**/*.jar",
+    ],
     "java.import.bazel.disabled": false,
     "java.import.maven.enabled": false,
-    "java.import.gradle.enabled": false
+    "java.import.gradle.enabled": false,
+    "java.configuration.updateBuildConfiguration": "disabled",
+    "java.autobuild.enabled": false,
+    "java.jdt.ls.vmargs": "-Xmx32G -XX:+UseParallelGC",
+    "java.server.launchMode": "LightWeight",
+    "java.import.gradle.wrapper.enabled": false,
+    "java.import.gradle.annotationProcessing.enabled": false,
+    "bazel.projectview.updateFileWatcherExclusion": false,
+    "git.enabled": false
 }

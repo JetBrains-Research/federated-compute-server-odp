@@ -29,6 +29,9 @@ This Federated Compute service would be deployed on cloud service(s) which suppo
 This is a preview version of the On-Device Personalization Federated Compute Server and should be used for testing and evaluation purposes. As such, there are not yet any guarantees about forward/backward source compatibility. It is currently not recommended for use in production settings.
 
 ## Devenv setup
+0. Install [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack)
+0. Install [Bazel](https://marketplace.visualstudio.com/items?itemName=BazelBuild.vscode-bazel)
+0. Install [Bazel extension for Java](https://marketplace.visualstudio.com/items?itemName=sfdc.bazel-vscode-java)
 1. Install required packages
 ```
 sudo apt-get update
@@ -48,4 +51,35 @@ sudo apt-get install --no-install-recommends -y \
 ```
 wget https://github.com/bazelbuild/bazelisk/releases/download/v1.26.0/bazelisk-amd64.deb
 sudo dpkg -i bazelisk-amd64.deb
+```
+3. Setup docker:
+```
+# 1-A Remove any old Docker packages
+sudo apt remove docker docker-engine docker.io containerd runc
+
+# 1-B Add Docker’s GPG key & repository (instructions Feb 2025)
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  | sudo tee /etc/apt/keyrings/docker.asc >/dev/null
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+  | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+
+# 1-C Install Engine + Compose plug-in
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo usermod -aG docker $USER
+newgrp docker
+```
+4. Run local setup:
+```
+./scripts/docker/run_all_services_docker.sh
+```
+5. Further run:
+```
+bazel run java/src/it/java/com/google/ondevicepersonalization/federatedcompute/endtoendtests:end_to_end_test -- --server http://localhost:8080  --task_management_server http://localhost:8080 --encrypt false
 ```
