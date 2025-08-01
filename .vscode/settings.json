@@ -16,16 +16,6 @@
         ".vscode": false,
         ".idea": false,
         ".bazelbsp": false,
-        "docs": true,
-        "external": true,
-        "federatedcompute": false,
-        "java": false,
-        "patches": true,
-        "python": true,
-        "scripts": true,
-        "shuffler": true,
-        "toolchain": true,
-        "tools": true
     },
     "java.project.sourcePaths": [
         "java/src/it/java",
@@ -53,9 +43,8 @@
     "java.configuration.updateBuildConfiguration": "disabled",
     "java.autobuild.enabled": false,
     "java.jdt.ls.vmargs": "-Xmx32G -XX:+UseParallelGC",
-    "java.server.launchMode": "LightWeight",
+    "java.server.launchMode": "Hybrid",
     "java.import.gradle.wrapper.enabled": false,
     "java.import.gradle.annotationProcessing.enabled": false,
     "bazel.projectview.updateFileWatcherExclusion": false,
-    "git.enabled": false
 }

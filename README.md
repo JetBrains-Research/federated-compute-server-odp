@@ -75,6 +75,12 @@ sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin dock
 sudo usermod -aG docker $USER
 newgrp docker
 ```
+4. Create key.json for proper account and update GOOGLE_APPLICATION_CREDENTIALS:
+```
+gcloud iam service-accounts keys create ~/key.json
+export GOOGLE_APPLICATION_CREDENTIALS=$HOME/key.json
+```
+
 4. Run local setup:
 ```
 ./scripts/docker/run_all_services_docker.sh
