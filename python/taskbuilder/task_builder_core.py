@@ -33,9 +33,11 @@ def build_task_group_request_handler(
 ) -> task_builder_pb2.BuildTaskResponse:
   project_id = io_utils.get_gcp_project_id()
   gcs_client = storage.Client(project=project_id)
+  logging.info(f"common.BuildTaskRequest: {build_task_request}")
   model = build_task_request.model
   task_config = build_task_request.task_config
   flags = build_task_request.flags
+  it_proc = build_task_request.iterative_process
   task_report = task_builder_pb2.TaskReport()
 
   population_name = task_config.population_name
@@ -43,11 +45,14 @@ def build_task_group_request_handler(
       task_config.mode == task_builder_pb2.TaskMode.Enum.TRAINING_AND_EVAL
   )
   is_eval_only = task_config.mode == task_builder_pb2.TaskMode.Enum.EVAL_ONLY
+  is_analytics = task_config.mode == task_builder_pb2.TaskMode.Enum.ANALYTICS
   use_daf = task_config.use_daf
   logging.info(
       'Successfully loaded input. Start building task group under population'
       f' `{population_name}`...'
   )
+
+  assert (is_analytics == (it_proc is not None)), f"{is_analytics} and {it_proc} MUST go together"
   # Validate task config
   try:
     config_validator.validate_metadata(task_config=task_config)
@@ -55,16 +60,19 @@ def build_task_group_request_handler(
         'Basic config is valid. Start validating differential privacy setup...'
     )
     # DP accounting validation for training task
-    dp_parameters = config_validator.validate_fcp_dp(task_config, flags)
-    dp_parameters_proto = task_builder_pb2.TaskReport.DPHyperparameters(
-        dp_delta=dp_parameters.dp_delta,
-        dp_epsilon=dp_parameters.dp_epsilon,
-        noise_multiplier=dp_parameters.noise_multiplier,
-        dp_clip_norm=dp_parameters.dp_clip_norm,
-        num_training_rounds=dp_parameters.num_training_rounds,
-    )
+    if not is_analytics:
+      dp_parameters = config_validator.validate_fcp_dp(task_config, flags)
+      dp_parameters_proto = task_builder_pb2.TaskReport.DPHyperparameters(
+          dp_delta=dp_parameters.dp_delta,
+          dp_epsilon=dp_parameters.dp_epsilon,
+          noise_multiplier=dp_parameters.noise_multiplier,
+          dp_clip_norm=dp_parameters.dp_clip_norm,
+          num_training_rounds=dp_parameters.num_training_rounds,
+      )
 
-    task_report.dp_hyperparameters.CopyFrom(dp_parameters_proto)
+      task_report.dp_hyperparameters.CopyFrom(dp_parameters_proto)
+    else:
+      logging.info('Skipping DP settings for analytics')
     logging.info('Task config is valid! Start building the task group.')
   except common.TaskBuilderException as e:
     return _pack_task_builder_error(
@@ -74,13 +82,19 @@ def build_task_group_request_handler(
     )
 
   # Compose learning algorithms based on `learning_process` config
-  try:
-    dataset_preprocessor = dataset_utils.compose_preprocessing_fn(
-        model=model,
-        dataset_policy=task_config.policies.dataset_policy,
-        label_name=task_config.label_name,
-    )
-    training_iterative_process, evaluation_iterative_process, task_report = (
+  if is_analytics:
+    # todo: support preprocessing
+    dataset_preprocessor = None
+    training_iterative_process = it_proc
+    evaluation_iterative_process = None
+  else:
+    try:
+      dataset_preprocessor = dataset_utils.compose_preprocessing_fn(
+          model=model,
+          dataset_policy=task_config.policies.dataset_policy,
+          label_name=task_config.label_name,
+      )
+      training_iterative_process, evaluation_iterative_process, task_report = (
         learning_process_utils.compose_iterative_processes(
             model=model,
             learning_process=task_config.federated_learning.learning_process,
@@ -90,14 +104,14 @@ def build_task_group_request_handler(
             flags=flags,
             task_report=task_report,
         )
-    )
-  except Exception as e:
-    return _pack_task_builder_error(
-        task_builder_pb2.ErrorType.Enum.INVALID_REQUEST,
-        'Failed to build learning algorithm based on `learning_process`'
-        f' config: {str(e)}',
-        task_report=task_report,
-    )
+      )
+    except Exception as e:
+      return _pack_task_builder_error(
+          task_builder_pb2.ErrorType.Enum.INVALID_REQUEST,
+          'Failed to build learning algorithm based on `learning_process`'
+          f' config: {str(e)}',
+          task_report=task_report,
+      )
 
   if artifact_only:
     main_task, optional_task = (
@@ -224,6 +238,7 @@ def build_task_group_request_handler(
       task_report=task_report,
       is_eval_only=is_eval_only,
       is_training_and_eval=is_training_and_eval,
+      is_analytics=is_analytics,
   )
 
 
@@ -247,6 +262,7 @@ def _pack_task_builder_success(
     task_report: task_builder_pb2.TaskReport,
     is_eval_only: Optional[bool] = False,
     is_training_and_eval: Optional[bool] = False,
+    is_analytics: bool = False,
 ) -> task_builder_pb2.BuildTaskResponse:
   if is_eval_only:
     return task_builder_pb2.BuildTaskResponse(
@@ -260,6 +276,12 @@ def _pack_task_builder_success(
         ),
         task_report=task_report,
     )
+  if is_analytics:
+    return task_builder_pb2.BuildTaskResponse(
+      task_group=task_builder_pb2.TaskGroup(analytics_task=main_task),
+      task_report=task_report,
+    )
+
   return task_builder_pb2.BuildTaskResponse(
       task_group=task_builder_pb2.TaskGroup(training_task=main_task),
       task_report=task_report,

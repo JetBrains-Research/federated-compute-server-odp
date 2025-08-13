@@ -24,6 +24,8 @@ from google.protobuf.message import DecodeError
 import http_utils
 from shuffler.proto import task_builder_pb2
 import tensorflow_federated as tff
+from tensorflow_federated.proto.v0 import computation_pb2
+from tensorflow_federated.python.core.impl.computation import computation_serialization
 
 
 def load_functional_model(
@@ -33,13 +35,21 @@ def load_functional_model(
 
   from a GCS `model_path`.
   """
+  return read_file_from_bucket(model_path, client, tff.learning.models.load_functional_model)
+
+
+def read_file_from_bucket(
+    path: str,
+    client: storage.Client,
+    parser_fn
+):
   try:
-    blob_id = parse_gcs_uri(uri=model_path, allow_empty_blob=True)
+    blob_id = parse_gcs_uri(uri=path, allow_empty_blob=True)
     bucket_name = blob_id.bucket
-    model_dir = blob_id.name
+    file_dir = blob_id.name
     bucket = client.bucket(bucket_name)
     with tempfile.TemporaryDirectory() as temp_path:
-      blobs = bucket.list_blobs(prefix=model_dir)
+      blobs = bucket.list_blobs(prefix=file_dir)
       for blob in blobs:
         if blob.name.endswith('/'):
           continue
@@ -49,14 +59,28 @@ def load_functional_model(
         os.makedirs(local_dir, exist_ok=True)
         with open(file_path, 'wb+') as f:
           blob.download_to_file(f)
-      functional_model = tff.learning.models.load_functional_model(
-          os.path.join(temp_path, model_dir)
-      )
+
+      model_path = os.path.join(temp_path, file_dir)
+      return parser_fn(model_path)
   except Exception as e:
     raise common.TaskBuilderException(
-        common.LOADING_MODEL_ERROR_MESSAGE.format(path=model_path)
+      common.LOADING_MODEL_ERROR_MESSAGE.format(path=path)
     ) from e
-  return functional_model
+
+
+def load_iterative_process(path: str, client: storage.Client) -> task_builder_pb2.IterativeProcess:
+  def parse(path):
+    with open(path, 'rb') as iter_proc_data:
+      try:
+        iter_proc = task_builder_pb2.IterativeProcess()
+        iter_proc.ParseFromString(iter_proc_data.read())
+        return iter_proc
+      except DecodeError as e:
+        raise common.TaskBuilderException(
+          'Unable to decode iterative process: ' + str(e)
+        )
+
+  return read_file_from_bucket(path, client, parse)
 
 
 def load_task_config(
@@ -152,7 +176,8 @@ def upload_content_to_gcs(
 
 
 def create_build_task_request_from_resource_path(
-    model_path: str,
+    model_path: Optional[str],
+    iter_proc_path: Optional[str],
     task_config_path: str,
     client: storage.Client,
     flags: task_builder_pb2.ExperimentFlags,
@@ -166,7 +191,8 @@ def create_build_task_request_from_resource_path(
   except common.TaskBuilderException as e:
     raise e
   return task_builder_pb2.BuildTaskRequest(
-      saved_model=common_pb2.Resource(uri=model_path),
+      saved_model=common_pb2.Resource(uri=model_path) if model_path else None,
+      iterative_process=common_pb2.Resource(uri=iter_proc_path) if iter_proc_path else None,
       task_config=task_config,
       flags=flags,
   )
@@ -183,25 +209,55 @@ def create_build_task_request_from_request_body(
     raise common.TaskBuilderException(
         'Unable to decode request body: ' + str(e)
     )
+
+  logging.info(f"Request: {build_task_request}")
   saved_model_request = build_task_request.saved_model
   task_config_request = build_task_request.task_config
+  iterative_process_request = build_task_request.iterative_process
   flags_request = build_task_request.flags
 
-  functional_model = None
-
-  if saved_model_request.HasField('uri'):
-    try:
+  if task_config_request.mode != task_builder_pb2.TaskMode.Enum.ANALYTICS:
+    functional_model = None
+    if saved_model_request.HasField('uri'):
       functional_model = load_functional_model(
           model_path=saved_model_request.uri, client=client
       )
-    except common.TaskBuilderException as e:
-      raise e
 
-  return common.BuildTaskRequest(
-      model=functional_model,
+    logging.info(f"Saved model based task has been built")
+    return common.BuildTaskRequest(
+        model=functional_model,
+        task_config=task_config_request,
+        flags=flags_request,
+    )
+  else:
+    iterative_process_data = load_iterative_process(iterative_process_request.uri, client)
+    init_comp = build_concrete_computation(iterative_process_data.init_comp)
+    next_comp = build_concrete_computation(iterative_process_data.next_comp)
+    iterative_process = tff.templates.IterativeProcess(
+      initialize_fn=init_comp,
+      next_fn=next_comp
+    )
+
+    logging.info(f"Iterated process based task has been built")
+    return common.BuildTaskRequest(
+      iterative_process=iterative_process,
       task_config=task_config_request,
       flags=flags_request,
-  )
+    )
+
+
+def build_concrete_computation(raw_comp: bytes) -> tff.framework.ConcreteComputation:
+  comp_proto = computation_pb2.Computation()
+  try:
+    comp_proto.ParseFromString(raw_comp)
+  except DecodeError as e:
+    raise common.TaskBuilderException(
+      'Unable to decode initialize computation: ' + str(e)
+    )
+
+  # bb = tff.python.core.impl.compiler.building_blocks.ComputationBuildingBlock.from_proto(comp_proto)
+  # return tff.framework.ConcreteComputation.from_building_block(bb)
+  return computation_serialization.deserialize_computation(comp_proto)
 
 
 def get_gcp_project_id() -> Optional[str]:

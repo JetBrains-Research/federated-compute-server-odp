@@ -44,6 +44,11 @@ MODEL_PATH = flags.DEFINE_string(
     help='GCS URI to the SavedModel resource.',
     default=None,
 )
+ITER_PROC_PATH = flags.DEFINE_string(
+  name='iter_proc',
+  help='GCS URI to the Iterative Process resource.',
+  default=None,
+)
 CONFIG_PATH = flags.DEFINE_string(
     name='task_config',
     help='GCS URI to the task config resource in pbtxt.',
@@ -262,9 +267,10 @@ class DpParameter:
 
 @dataclass
 class BuildTaskRequest:
-  model: tff.learning.models.FunctionalModel
   task_config: task_builder_pb2.TaskConfig
   flags: task_builder_pb2.ExperimentFlags
+  model: tff.learning.models.FunctionalModel = None
+  iterative_process: tff.templates.IterativeProcess = None
 
 
 class TaskBuilderException(Exception):

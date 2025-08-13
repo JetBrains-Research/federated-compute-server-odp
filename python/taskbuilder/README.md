@@ -43,3 +43,7 @@ Run the Python client: `bazel run //python/taskbuilder:task_builder_client -- --
 - `--build_artifact_only`: the option to skip task creation and build artifacts only. You can find a sample [here](sample/keras/input/keras_task_config_build_artifact_only.pbtxt)
 - `--skip_flex_ops_check`: the option to skip flex ops check in Android TensorflowLite library.
 - All other options are same as above. The generated task will uploaded to the GCS path you specified [here](sample/keras/input/keras_task_config_build_artifact_only.pbtxt#L32). You can find some output samples [here](sample/keras/output)
+
+### Workflow 3: analytics
+- bazel run //shuffler/services/taskbuilder:tarball && docker compose u
+- bazel run //python/taskbuilder:task_builder_client -- --iter_proc gs://jbf-odp/test/iterative_process.pb --task_config gs://jbf-odp/test/task_config.pbtxt

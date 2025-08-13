@@ -23,7 +23,6 @@ app = Flask(__name__)
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
-
 @app.route('/taskbuilder/v1:build-task-group', methods=['POST'])
 def build_task_group():
   gcp_project_id = io_utils.get_gcp_project_id()

@@ -60,7 +60,7 @@ public final class TaskManagementController {
             taskCore.createTask(
                 request.getTask().toBuilder()
                     .setPopulationName(populationName)
-                    .setTaskId(0)
+                    .setTaskId(0) // yuraaka: check if task id is filled by the client
                     .build()))
         .build();
   }

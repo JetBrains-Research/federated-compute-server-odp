@@ -30,8 +30,6 @@ This is a preview version of the On-Device Personalization Federated Compute Ser
 
 ## Devenv setup
 0. Install [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack)
-0. Install [Bazel](https://marketplace.visualstudio.com/items?itemName=BazelBuild.vscode-bazel)
-0. Install [Bazel extension for Java](https://marketplace.visualstudio.com/items?itemName=sfdc.bazel-vscode-java)
 1. Install required packages
 ```
 sudo apt-get update
@@ -45,7 +43,8 @@ sudo apt-get install --no-install-recommends -y \
     libtinfo5 \
     g++ \
     python3 \
-    jq
+    jq \
+    clang
 ```
 2. Download & install bazelisk
 ```
@@ -77,7 +76,7 @@ newgrp docker
 ```
 4. Create key.json for proper account and update GOOGLE_APPLICATION_CREDENTIALS:
 ```
-gcloud iam service-accounts keys create ~/key.json
+gcloud iam service-accounts keys create ~/key.json --iam-account=yuraaka-tm@jetbrains-fed-compute.iam.gserviceaccount.com
 export GOOGLE_APPLICATION_CREDENTIALS=$HOME/key.json
 ```
 

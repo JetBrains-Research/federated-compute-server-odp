@@ -80,14 +80,15 @@ def task_builder_request_handler(
 
 def main(argv):
   model_path = common.MODEL_PATH.value
+  iter_proc_path = common.ITER_PROC_PATH.value
   task_config_path = common.CONFIG_PATH.value
   e2e_population_name = common.E2E_TEST_POPULATION_NAME.value
   artifact_only = common.ARTIFACT_BUILDING_ONLY.value
   skip_flex_ops_check = common.SKIP_FLEX_OPS_CHECK.value
   skip_dp_check = common.SKIP_DP_CHECK.value
   skip_dp_aggregator = common.SKIP_DP_AGGREGATOR.value
-  if not model_path:
-    raise ValueError('`--saved_model` is required but not set.')
+  if not model_path and not iter_proc_path:
+    raise ValueError('`--saved_model` or `--iter_proc` is required but not set.')
   if not task_config_path:
     raise ValueError('`--task_config` is required but not set.')
 
@@ -98,6 +99,7 @@ def main(argv):
   flags.skip_dp_aggregator = skip_dp_aggregator
   task_builder_request = io_utils.create_build_task_request_from_resource_path(
       model_path=model_path,
+      iter_proc_path=iter_proc_path,
       task_config_path=task_config_path,
       client=storage.Client(),
       flags=flags,

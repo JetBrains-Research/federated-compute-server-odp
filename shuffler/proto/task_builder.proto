@@ -68,6 +68,8 @@ message TaskGroup {
   Task training_task = 1;
   // Evaluation task
   Task eval_task = 2;
+  // Analytics task
+  Task analytics_task = 3;
 }
 
 // Experiment flags.
@@ -83,7 +85,7 @@ message ExperimentFlags {
 // https://{host}/taskbuilder/v1:build-task
 // Next Id: 3
 message BuildTaskRequest {
-  // Required. Either a URI where model information is downloaded from
+  // Either a URI where model information is downloaded from
   // or serialized data is inline.
   // The model should be saved in the `SavedModel` format. See more
   // instructions in https://www.tensorflow.org/guide/saved_model.
@@ -96,6 +98,13 @@ message BuildTaskRequest {
 
   // Optional. To support different build options and features.
   ExperimentFlags flags = 3;
+
+  // Either a URI where iterative process information is downloaded from
+  // or serialized data is inline.
+  // The iterative proces should be saved in the `IterativeProcess` format
+  // Currently, if `Resource.uri` is set, it has to be prefixed with
+  // `gs://` to indicate it is a remote resource from GCS.
+  google.internal.federatedcompute.v1.Resource iterative_process = 4;
 }
 
 // Build task response.
@@ -126,6 +135,7 @@ message TaskMode {
     TRAINING_ONLY = 1;
     TRAINING_AND_EVAL = 2;
     EVAL_ONLY = 3;
+    ANALYTICS = 4;
   }
 }
 
@@ -283,4 +293,9 @@ message TaskReport {
     int64 num_training_rounds = 5;
   }
   DPHyperparameters dp_hyperparameters = 4;
+}
+
+message IterativeProcess {
+  bytes init_comp = 1;
+  bytes next_comp = 2;
 }

@@ -8,7 +8,7 @@
         "**/Thumbs.db": true,
         "**/CVS": true,
         ".eclipse": false,
-        ".git": true,
+        ".git": false,
         "bazel-odp": false,
         "bazel-out": false,
         "bazel-bin": false,
@@ -16,6 +16,16 @@
         ".vscode": false,
         ".idea": false,
         ".bazelbsp": false,
+        "docs": false,
+        "external": false,
+        "federatedcompute": false,
+        "java": false,
+        "patches": false,
+        "python": false,
+        "scripts": false,
+        "shuffler": false,
+        "toolchain": false,
+        "tools": false
     },
     "java.project.sourcePaths": [
         "java/src/it/java",
@@ -26,15 +36,14 @@
     "files.watcherExclude": {
         "**/.git/objects/**": true,
         "**/.git/subtree-cache/**": true,
-        "**/.hg/store/**": true,
-        "**/!(.eclipse|java)/**": true
+        "**/.hg/store/**": true
     },
     "java.project.referencedLibraries": [
         "bazel-out/k8-opt/bin/external/maven/v1/https/repo1.maven.org/maven2/**/*.jar",
         "bazel-bin/external/federatedcompute/fcp/protos/**/*.jar",
         "bazel-out/k8-opt/bin/external/**/*.jar",
         "bazel-out/k8-opt/bin/shuffler/**/*.jar",
-        "bazel-bin/java/src/test/java/com/google/ondevicepersonalization/federatedcompute/shuffler/**/*.jar",
+        //"bazel-bin/java/src/test/java/com/google/ondevicepersonalization/federatedcompute/shuffler/**/*.jar",
         "bazel-out/k8-opt/bin/external/federatedcompute/fcp/protos/**/*.jar",
     ],
     "java.import.bazel.disabled": false,
