@@ -1,0 +1,15 @@
+diff --git tensorflow_federated/cc/simulation/BUILD tensorflow_federated/cc/simulation/BUILD
+index 57258e78d..a29760098 100644
+--- tensorflow_federated/cc/simulation/BUILD
++++ tensorflow_federated/cc/simulation/BUILD
+@@ -53,6 +53,9 @@ cc_library(
+
+ cc_binary(
+     name = "worker_binary",
+-    linkopts = ["-lrt"],
++    linkopts = select({
++        "//conditions:default": [],
++        "@bazel_tools//src/conditions:linux": ["-lrt"],
++    }),
+     deps = [":worker_main"],
+ )

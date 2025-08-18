@@ -1,0 +1,101 @@
+diff --git fcp/tensorflow/pip_tf/defs.bzl fcp/tensorflow/pip_tf/defs.bzl
+index 62e1896..54bc16b 100644
+--- fcp/tensorflow/pip_tf/defs.bzl
++++ fcp/tensorflow/pip_tf/defs.bzl
+@@ -13,20 +13,77 @@
+ # limitations under the License.
+ """Provides rules for building custom TensorFlow ops compatible with pip."""
+
++load("@python_version_repo//:py_version.bzl", "HOST_OS")
++
+ # Additional BUILD content that should be added to @pypi_tensorflow.
+-TF_ADDITIVE_BUILD_CONTENT = """
++TF_LINUX_PKG_ADDITIVE_BUILD_CONTENT = """
+ cc_library(
+-    name = "tf_headers",
+-    hdrs = glob(["site-packages/tensorflow/include/**"]),
++    name = "_tf_headers",
++    hdrs = glob(
++        ["site-packages/tensorflow/include/**"],
++        allow_empty = True,
++    ),
+     includes = ["site-packages/tensorflow/include"],
+ )
+
+ cc_library(
+-    name = "libtensorflow_framework",
++    name = "_libtensorflow_framework",
+     srcs = ["site-packages/tensorflow/libtensorflow_framework.so.2"],
+ )
+ """
+
++TF_MACOS_PKG_ADDITIVE_BUILD_CONTENT = """
++cc_library(
++    name = "_tf_headers",
++    hdrs = glob(
++        ["site-packages/tensorflow/include/**"],
++        allow_empty = True,
++    ),
++    includes = ["site-packages/tensorflow/include"],
++)
++
++cc_library(
++    name = "_libtensorflow_framework",
++    srcs = ["site-packages/tensorflow/libtensorflow_framework.2.dylib"],
++)
++"""
++
++TF_ADDITIVE_BUILD_CONTENT = """
++config_setting(
++    name = "is_tf_aws",
++    constraint_values = [
++        "@platforms//os:linux",
++        "@platforms//cpu:aarch64",
++    ],
++)
++
++config_setting(
++    name = "is_tf_macos",
++    constraint_values = [
++        "@platforms//os:macos",
++    ],
++)
++
++alias(
++    name = "tf_headers",
++    actual = select({
++        ":is_tf_aws": "@pypi_tensorflow_cpu_aws//:_tf_headers",
++        ":is_tf_macos": "@pypi_tensorflow_macos//:_tf_headers",
++        "//conditions:default": "@pypi_tensorflow//:_tf_headers",
++    }),
++)
++
++alias(
++    name = "libtensorflow_framework",
++    actual = select({
++        ":is_tf_aws": "@pypi_tensorflow_cpu_aws//:_libtensorflow_framework",
++        ":is_tf_macos": "@pypi_tensorflow_macos//:_libtensorflow_framework",
++        "//conditions:default": "@pypi_tensorflow//:_libtensorflow_framework",
++    }),
++)
++
++""" + TF_LINUX_PKG_ADDITIVE_BUILD_CONTENT
++
+ # Build flags for using the pip-provided TensorFlow package. pip_tf_flags_test ensures that these
+ # values stay in sync with the currently-used TF version.
+ PIP_TF_COPTS = ["-DEIGEN_MAX_ALIGN_BYTES=64", "-D_GLIBCXX_USE_CXX11_ABI=1"]
+@@ -41,9 +98,12 @@
+     cxxopts += PIP_TF_CXXOPTS
+     linkopts += PIP_TF_LINKOPTS
+
++
++
+     # TensorFlow's pip package was built with libstdc++.
+-    cxxopts.append("-stdlib=libstdc++")
+-    linkopts.append("-stdlib=libstdc++")
++    if HOST_OS == "linux":
++        cxxopts.append("-stdlib=libstdc++")
++        linkopts.append("-stdlib=libstdc++")
+
+     return {
+         "//command_line_option:copt": copts,

@@ -1,0 +1,18 @@
+--- tensorflow/core/BUILD	(revision 99d80a9e254c9df7940b2902b14d15914dbbbcd9)
++++ tensorflow/core/BUILD
+@@ -1221,6 +1221,7 @@
+             "lib/jpeg/**/*",
+             "lib/png/**/*",
+         ],
++        allow_empty=True, # glob() doesn't match files in subpackages
+     ),
+     visibility = ["//visibility:private"],
+ )
+@@ -1315,6 +1316,7 @@
+             "lib/jpeg/**/*",
+             "lib/png/**/*",
+         ],
++        allow_empty=True, # glob() doesn't match files in subpackages
+     ),
+     hdrs = [":lib_internal_public_headers"],
+     copts = tf_copts(),

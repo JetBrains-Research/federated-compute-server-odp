@@ -1,0 +1,12 @@
+diff --git a/fcp/client/http/curl/curl_http_request_handle.cc b/fcp/client/http/curl/curl_http_request_handle.cc
+--- fcp/client/http/curl/curl_http_request_handle.cc
++++ fcp/client/http/curl/curl_http_request_handle.cc
+@@ -287,7 +287,7 @@ CURLcode CurlHttpRequestHandle::InitializeConnection(
+   // Force curl to verify the ssl connection.
+   CURL_RETURN_IF_ERROR(
+       test_cert_path.empty()
+-          ? easy_handle_->SetOpt(CURLOPT_CAINFO, nullptr)
++          ? CURLE_OK
+           : easy_handle_->SetOpt(CURLOPT_CAINFO, test_cert_path));
+
+   CURL_RETURN_IF_ERROR(easy_handle_->SetOpt(CURLOPT_SSL_VERIFYPEER, 2L));
