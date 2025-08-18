@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 load("@rules_python//python:proto.bzl", "py_proto_library")
-load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -138,7 +138,7 @@ py_library(
     srcs_version = "PY3",
     deps = [
         ":common",
-	":graph_compactor",
+        ":graph_compactor",
         ":io_utils",
         ":support_ops_utils",
         ":tensorflow_checkpoints",
@@ -318,8 +318,8 @@ py_test(
         ":common",
         ":task_builder_core",
         ":test_utils",
-        "//shuffler/proto:task_py_pb2",
         "//shuffler/proto:task_builder_py_pb2",
+        "//shuffler/proto:task_py_pb2",
         "@pypi_responses//:pkg",
     ],
 )
@@ -382,11 +382,11 @@ py_test(
 # Create the Pybind11 extension (shared library)
 pybind_extension(
     name = "tflite_flex_ops",
-    srcs = ["tflite_flex_ops.cc"], # File containing the Pybind11 bindings
+    srcs = ["tflite_flex_ops.cc"],  # File containing the Pybind11 bindings
     deps = [
-        "@org_tensorflow//tensorflow/lite/tools:list_flex_ops",
-        "@federatedcompute//fcp/tensorflow:external_dataset_op_lib",
         "@com_google_absl//absl/container:flat_hash_map",
+        "@federatedcompute//fcp/tensorflow:external_dataset_op_lib",
+        "@org_tensorflow//tensorflow/lite/tools:list_flex_ops",
     ],
 )
 
@@ -395,8 +395,8 @@ py_library(
     srcs = ["graph_compactor.py"],
     srcs_version = "PY3",
     deps = [
-	"@pypi_absl_py//:pkg",
-        "@pypi_tensorflow//:pkg",
+        "@pypi_absl_py//:pkg",
         "@pypi_google_cloud_storage//:pkg",
+        "@pypi_tensorflow//:pkg",
     ],
 )

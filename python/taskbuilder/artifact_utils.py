@@ -29,6 +29,8 @@ import support_ops_utils
 import tensorflow as tf
 import tensorflow_checkpoints
 import tensorflow_federated as tff
+from google.protobuf import text_format
+import hashlib
 
 
 def build_artifacts(
@@ -122,6 +124,9 @@ def _build_plan(
     compact_graph: Optional[bool] = True,
 ) -> plan_pb2.Plan:
   logging.info('Start building plan...')
+  hash_object = hashlib.sha256(learning_process_comp._computation_proto.SerializeToString())
+  hex_dig = hash_object.hexdigest()
+  logging.info(f"Computation hash: {hex_dig}")
   try:
     if use_daf:
       logging.log(

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +19,12 @@ from flask import Flask, Response, request
 from google.cloud import storage
 import io_utils
 import task_builder_core
+import os
+import time
+
 
 app = Flask(__name__)
+
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
@@ -62,7 +67,6 @@ def build_artifacts():
       content_type=common.PROTOBUF_HEADERS['Content-Type'],
   )
 
-
 @app.route('/ready')
 def ready():
   return 'Greetings from Task Builder Flask! Ready check. \n'
@@ -74,4 +78,4 @@ def healthz():
 
 
 if __name__ == '__main__':
-  app.run('0.0.0.0')
+  app.run('127.0.0.1', debug=False, use_reloader=False)

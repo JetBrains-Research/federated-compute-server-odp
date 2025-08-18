@@ -8,6 +8,13 @@ build --java_runtime_version=remotejdk_21
 build --tool_java_language_version=21
 build --tool_java_runtime_version=remotejdk_21
 
+build --compilation_mode=fastbuild
+build --reuse_sandbox_directories
+build --noexperimental_check_external_repository_files
+build --noexperimental_action_cache_store_output_metadata
+build --remote_download_outputs=minimal
+build --jobs=8  # or whatever suits your hardware
+
 build --strategy=CopyFile=sandboxed,standalone
 build --strategy=CopyToDirectory=sandboxed,standalone
 

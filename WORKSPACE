@@ -149,7 +149,6 @@ maven_install(
         "org.threeten:threetenbp:1.6.8",
         # spanner
         "com.google.cloud:google-cloud-spanner-jdbc:2.25.0",
-
     ],
     repositories = [
         "https://maven.google.com",

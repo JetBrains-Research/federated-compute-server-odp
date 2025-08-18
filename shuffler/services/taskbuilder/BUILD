@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
 load("@aspect_bazel_lib//lib:tar.bzl", "mtree_spec", "tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
 
 # Produce the manifest for a tar file of our py_binary, but don't tar it up yet, so we can split
 # into fine-grained layers for better docker performance.

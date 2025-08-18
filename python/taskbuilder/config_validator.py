@@ -48,8 +48,9 @@ def validate_metadata(
         task_mode=task_config.mode, fl_setup=task_config.federated_learning
     )
 
-  # Validate `differential_privacy` setup
-  _validate_differential_privacy_setup(task_config.differential_privacy)
+    # Validate `differential_privacy` setup
+    _validate_differential_privacy_setup(task_config.differential_privacy)
+
   return task_config.mode
 
 

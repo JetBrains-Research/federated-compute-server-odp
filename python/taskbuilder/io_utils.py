@@ -210,7 +210,6 @@ def create_build_task_request_from_request_body(
         'Unable to decode request body: ' + str(e)
     )
 
-  logging.info(f"Request: {build_task_request}")
   saved_model_request = build_task_request.saved_model
   task_config_request = build_task_request.task_config
   iterative_process_request = build_task_request.iterative_process
@@ -255,8 +254,6 @@ def build_concrete_computation(raw_comp: bytes) -> tff.framework.ConcreteComputa
       'Unable to decode initialize computation: ' + str(e)
     )
 
-  # bb = tff.python.core.impl.compiler.building_blocks.ComputationBuildingBlock.from_proto(comp_proto)
-  # return tff.framework.ConcreteComputation.from_building_block(bb)
   return computation_serialization.deserialize_computation(comp_proto)
 
 

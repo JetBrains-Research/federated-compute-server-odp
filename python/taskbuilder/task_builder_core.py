@@ -33,7 +33,6 @@ def build_task_group_request_handler(
 ) -> task_builder_pb2.BuildTaskResponse:
   project_id = io_utils.get_gcp_project_id()
   gcs_client = storage.Client(project=project_id)
-  logging.info(f"common.BuildTaskRequest: {build_task_request}")
   model = build_task_request.model
   task_config = build_task_request.task_config
   flags = build_task_request.flags
@@ -130,9 +129,7 @@ def build_task_group_request_handler(
     main_task_plan, main_task_client_plan, main_task_checkpoint = (
         artifact_utils.build_artifacts(
             task=main_task,
-            learning_process=evaluation_iterative_process
-            if is_eval_only
-            else training_iterative_process,
+            learning_process=evaluation_iterative_process if is_eval_only else training_iterative_process,
             dataspec=main_data_spec,
             use_daf=use_daf,
             flags=flags,
