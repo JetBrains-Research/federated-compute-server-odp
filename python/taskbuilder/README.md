@@ -45,5 +45,5 @@ Run the Python client: `bazel run //python/taskbuilder:task_builder_client -- --
 - All other options are same as above. The generated task will uploaded to the GCS path you specified [here](sample/keras/input/keras_task_config_build_artifact_only.pbtxt#L32). You can find some output samples [here](sample/keras/output)
 
 ### Workflow 3: analytics
-- bazel run //shuffler/services/taskbuilder:tarball && docker compose u
-- bazel run //python/taskbuilder:task_builder_client -- --iter_proc gs://jbf-odp/test/iterative_process.pb --task_config gs://jbf-odp/test/task_config.pbtxt
+- bazel run //shuffler/services/taskbuilder:tarball && docker compose up
+- bazel run //python/taskbuilder:task_builder_client -- --iter_proc gs://jbf-odp/test/iterative_process_68.pb --task_config gs://jbf-odp/test/task_config.pbtxt

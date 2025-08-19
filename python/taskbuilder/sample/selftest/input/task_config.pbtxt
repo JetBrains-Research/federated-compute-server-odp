@@ -3,7 +3,8 @@
 
 # Task Configuration in pbtxt format
 mode: ANALYTICS
-population_name: "jetbrains/nightly/intellij_idea"
+# slashes are prohibited
+population_name: "jetbrains-nightly-intellij_idea"
 use_daf: true
 
 # Policies
