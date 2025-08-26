@@ -19,7 +19,7 @@ package com.google.ondevicepersonalization.federatedcompute.shuffler.common;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.fcp.aggregation.AggregationException;
-import com.google.fcp.tensorflow.TensorflowException;
+import com.google.fcp.engine.EngineException;
 import com.google.scp.operator.cpio.cryptoclient.DecryptionKeyService.KeyFetchException;
 import com.google.scp.operator.cpio.cryptoclient.model.ErrorReason;
 
@@ -28,7 +28,7 @@ public class Exceptions {
 
   /** A function to decide if an exception is retryable. */
   public static boolean isRetryableException(Exception e) {
-    if (isTensorflowException(e)
+    if (isEngineException(e)
         || isAggregationException(e)
         || isNonRetryableKeyFetchException(e)
         || isNonRetryableException(e)) {
@@ -37,9 +37,9 @@ public class Exceptions {
     return true;
   }
 
-  public static boolean isTensorflowException(Exception e) {
-    return (e instanceof TensorflowException)
-        || (Throwables.getRootCause(e) instanceof TensorflowException);
+  public static boolean isEngineException(Exception e) {
+    return (e instanceof EngineException)
+        || (Throwables.getRootCause(e) instanceof EngineException);
   }
 
   public static boolean isAggregationException(Exception e) {
