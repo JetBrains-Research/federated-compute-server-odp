@@ -213,59 +213,12 @@ http_archive(
 )
 
 http_archive(
-    name = "org_tensorflow_federated",
-    sha256 = "2bb1e641a84f05bc1776eefc98eb108454807071ae0bed45ee5e8bee896511be",
-    strip_prefix = "tensorflow-federated-9c5a51af41fccc8e720a63aa754465767113877d",
-    url = "https://github.com/tensorflow/federated/archive/9c5a51af41fccc8e720a63aa754465767113877d.tar.gz",
-)
-
-http_archive(
     name = "platforms",
     sha256 = "3a561c99e7bdbe9173aa653fd579fe849f1d8d67395780ab4770b1f381431d51",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
         "https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz",
     ],
-)
-
-# Tensorflow v2.14.0
-http_archive(
-    name = "org_tensorflow",
-    patches = [
-        # This patch works around failures in GitHub infrastructure to
-        # download versions of LLVM pointed to by non-HEAD TensorFlow.
-        "@federatedcompute//fcp/patches:tensorflow_llvm_url.patch",
-        # This patch replaces tf_gen_op_wrapper_py's dependency on @tensorflow
-        # with @pypi_tensorflow.
-        "@federatedcompute//fcp/patches:tensorflow_tf_gen_op_wrapper_py.patch",
-        # gRPC v1.48.0-pre1 and later include zconf.h in addition to zlib.h;
-        # TensorFlow's build rule for zlib only exports the latter.
-        "@federatedcompute//fcp/patches:tensorflow_zlib.patch",
-    ],
-    sha256 = "ce357fd0728f0d1b0831d1653f475591662ec5bca736a94ff789e6b1944df19f",
-    strip_prefix = "tensorflow-2.14.0",
-    urls = [
-        "https://github.com/tensorflow/tensorflow/archive/v2.14.0.tar.gz",
-    ],
-)
-
-# The following is copied from TensorFlow's own WORKSPACE, see
-# https://github.com/tensorflow/tensorflow/blob/v2.14.0/WORKSPACE#L6
-http_archive(
-    name = "rules_python",
-    sha256 = "690e0141724abb568267e003c7b6d9a54925df40c275a870a4d934161dc9dd53",
-    strip_prefix = "rules_python-0.40.0",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.40.0/rules_python-0.40.0.tar.gz",
-)
-
-load("@rules_python//python:repositories.bzl", "py_repositories", "python_register_toolchains")
-
-py_repositories()
-
-python_register_toolchains(
-    name = "python",
-    ignore_root_user_error = True,
-    python_version = "3.10",
 )
 
 http_archive(
@@ -291,10 +244,6 @@ load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_
 
 rules_proto_toolchains()
 
-load("@federatedcompute//fcp/tensorflow/pip_tf:defs.bzl", "TF_ADDITIVE_BUILD_CONTENT")
-load("@python//:defs.bzl", "interpreter")
-load("@rules_python//python:pip.bzl", "package_annotation", "pip_parse")
-
 http_archive(
     name = "differential_privacy",
     repo_mapping = {
@@ -307,55 +256,11 @@ http_archive(
     ],
 )
 
-pip_parse(
-    name = "pypi",
-    annotations = {
-        "tensorflow": package_annotation(
-            additive_build_content = TF_ADDITIVE_BUILD_CONTENT,
-        ),
-    },
-    extra_pip_args = [
-        # Disable build isolation to avoid un-pinned build dependencies to be installed
-        # https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/#build-time-dependencies
-        # Pre-installed build deps: https://github.com/bazelbuild/rules_python/blob/2a5ba18d60b25e10b99d0fa87b1da51f40d9f0d3/python/private/pypi/deps.bzl
-        "--no-build-isolation",
-    ],
-    python_interpreter_target = interpreter,
-    requirements_lock = "//:requirements_lock_3_10.txt",
-)
-
-load("@pypi//:requirements.bzl", "install_deps")
-
-install_deps()
-
 http_archive(
     name = "com_github_grpc_grpc",
     sha256 = "76900ab068da86378395a8e125b5cc43dfae671e09ff6462ddfef18676e2165a",
     strip_prefix = "grpc-1.50.0",
     urls = ["https://github.com/grpc/grpc/archive/refs/tags/v1.50.0.tar.gz"],
-)
-
-load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
-
-tf_workspace3()
-
-load("@org_tensorflow//tensorflow:workspace2.bzl", "tf_workspace2")
-
-tf_workspace2()
-
-load("@org_tensorflow//tensorflow:workspace1.bzl", "tf_workspace1")
-
-tf_workspace1(False)
-
-load("@org_tensorflow//tensorflow:workspace0.bzl", "tf_workspace0")
-
-tf_workspace0()
-
-load("//tools:toolchain_provided_tf.bzl", "toolchain_provided_tf")
-
-toolchain_provided_tf(
-    name = "system_provided_tf",
-    tensorflow_repository = "@pypi_tensorflow",
 )
 
 ################
@@ -443,61 +348,3 @@ apt.install(
 load("@bookworm//:packages.bzl", "bookworm_packages")
 
 bookworm_packages()
-
-################
-# C++ Clang/LLVM Toolchain
-################
-
-http_archive(
-    name = "toolchains_llvm",
-    canonical_id = "0.10.3",
-    sha256 = "b7cd301ef7b0ece28d20d3e778697a5e3b81828393150bed04838c0c52963a01",
-    strip_prefix = "toolchains_llvm-0.10.3",
-    url = "https://github.com/grailbio/bazel-toolchain/releases/download/0.10.3/toolchains_llvm-0.10.3.tar.gz",
-)
-
-load("@toolchains_llvm//toolchain:deps.bzl", "bazel_toolchain_dependencies")
-
-bazel_toolchain_dependencies()
-
-load("@toolchains_llvm//toolchain:rules.bzl", "llvm_toolchain")
-
-llvm_toolchain(
-    name = "llvm_toolchain",
-    llvm_versions = {
-        "": "16.0.0",
-    },
-    sha256 = {
-        "": "2b8a69798e8dddeb57a186ecac217a35ea45607cb2b3cf30014431cff4340ad1",
-    },
-    strip_prefix = {
-        "": "clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04",
-    },
-    urls = {
-        "": ["https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz"],
-    },
-)
-
-load("@llvm_toolchain//:toolchains.bzl", "llvm_register_toolchains")
-
-llvm_register_toolchains()
-
-################
-# pybind11
-################
-
-http_archive(
-    name = "pybind11_bazel",
-    sha256 = "a58c25c5fe063a70057fa20cb8e15f3bda19b1030305bcb533af1e45f36a4a55",
-    strip_prefix = "pybind11_bazel-2.12.0",
-    urls = ["https://github.com/pybind/pybind11_bazel/archive/pybind11_bazel-2.12.0.zip"],
-)
-
-# We still require the pybind library.
-http_archive(
-    name = "pybind11",
-    build_file = "@pybind11_bazel//:pybind11-BUILD.bazel",
-    sha256 = "411f77380c43798506b39ec594fc7f2b532a13c4db674fcf2b1ca344efaefb68",
-    strip_prefix = "pybind11-2.12.0",
-    urls = ["https://github.com/pybind/pybind11/archive/pybind11-2.12.0.zip"],
-)
